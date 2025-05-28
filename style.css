@@ -1,0 +1,48 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+main {
+  display: grid;
+}
+
+#left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#habit-list {
+  background-color: #e0f0ff;
+  padding: 1rem;
+}
+
+#habit-form {
+  background-color: #ffe0e0;
+  padding: 1rem;
+}
+
+#calendar {
+  background-color: #fff6cc;
+  padding: 1rem;
+}
+
+#stats {
+  background-color: #d6ecff;
+  padding: 1rem;
+}

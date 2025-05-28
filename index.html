@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Habit tracker</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
@@ -18,22 +19,59 @@
 
                     </div>
                     <div class="col-2">
-                        Теми
+                        
                     </div>
                 </div>
             </div>
         </header>
-        <div class="menu">
+        <main>
+        <div class="container">
+            <div class="row">
+            <section id="left-panel" class="col-3">
+    <div>
+        <ul id="habit-list" class="list-unstyled mb-3"></ul>
+    </div>
+    <div id="habit-form">
+        <form id="add-habit-form" class="mb-3">
+            <div class="mb-2">
+                <label for="habit-name" class="form-label">Назва звички</label>
+                <input type="text" class="form-control" id="habit-name" name="habit-name" required>
+            </div>
+            <div class="mb-2">
+                <label for="habit-category" class="form-label">Категорія</label>
+                <select class="form-select" id="habit-category" name="habit-category" required>
+                    <option value="" disabled selected>Оберіть категорію</option>
+                    <option value="Здоров'я">Здоров'я</option>
+                    <option value="Навчання">Навчання</option>
+                    <option value="Робота">Робота</option>
+                    <option value="Особисте">Особисте</option>
+                    <option value="Інше">Інше</option>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label for="habit-color" class="form-label">Колір</label>
+                <input type="color" class="form-control form-control-color" id="habit-color" name="habit-color" value="#0d6efd" title="Оберіть колір">
+            </div>
+            <button type="submit" class="btn btn-primary">Додати звичку</button>
+        </form>
+    </div>
+    </section>
+
+    <div class="col-6">
+    <section id="calendar" class="mb-4">
+        <div id="calendar-content">
 
         </div>
-        <section id="form">
+    </section>
+            <section id="stats" class="mt-4">
+    <div class="habit-stats">
+        <h3>Статистика</h3>
+        <div id="habit-stats-list"></div>
+    </div>
+</section>
+        </div>
+        </main>
 
-        </section>
-        <section id="habit-list">
-
-        </section>
-        <section id="stats">
-
-        </section>
+    <script src="script.js"></script>
     </body>
 </html>
