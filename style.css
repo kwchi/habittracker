@@ -1,7 +1,7 @@
 * {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
+  padding: 1px;
 }
 
 body {
@@ -20,6 +20,19 @@ header {
 main {
   display: grid;
 }
+
+.habit-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+.table td, .table th {
+    vertical-align: middle;
+    text-align: center;
+}
+
 
 #left-panel {
   display: flex;

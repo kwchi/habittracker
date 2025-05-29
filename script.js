@@ -41,17 +41,19 @@ function renderHabits() {
     habits.forEach(habit => {
         const completedToday = habit.completedDates && habit.completedDates.includes(today);
         const btnClass = completedToday ? 'btn-secondary' : 'btn-success';
-        const btnText = completedToday ? 'Виконано сьогодні' : 'Виконано';
+        const btnText = completedToday ? 'Done for today' : 'Done';
         const btnDisabled = completedToday ? true : false;
 
         const li = document.createElement('li');
         li.classList.add('mb-2');
         li.innerHTML = `
+            <div class="bg-light border rounded">
             <span style="display:inline-block;width:16px;height:16px;background:${habit.color};border-radius:50%;margin-right:8px;"></span>
             <strong>${habit.name}</strong> <em>(${habit.category})</em>
             <button class="btn btn-sm ms-2 ${btnClass}" ${btnDisabled ? 'disabled' : ''}>${btnText}</button>
-            <button class="btn btn-sm btn-warning ms-2">Редагувати</button>
-            <button class="btn btn-sm btn-danger ms-2">Видалити</button>
+            <button class="btn btn-sm btn-warning ms-2">Edit</button>
+            <button class="btn btn-sm btn-danger ms-2">Delete</button>
+            </div>
         `;
 
         const buttons = li.querySelectorAll('button');
@@ -67,7 +69,7 @@ function renderHabits() {
 }
 
 window.deleteHabit = function(id) {
-    if (confirm('Ви дійсно хочете видалити цю звичку?')) {
+    if (confirm('Are you sure you want to delete this habit?')) {
         habits = habits.filter(h => h.id !== id);
         localStorage.setItem("habits", JSON.stringify(habits));
         renderHabits();
@@ -103,22 +105,40 @@ function renderCalendar() {
     calendarDiv.innerHTML = '';
 
     const last7Days = getLast7Days();
-    let html = '<table class="table table-bordered"><thead><tr><th>Звичка</th>';
-    last7Days.forEach(date => {
-        html += `<th style="font-size:12px">${date.slice(5)}</th>`;
-    });
-    html += '</tr></thead><tbody>';
+
+    let html = `
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle" style="min-width: 700px;">
+          <thead class="table-light">
+            <tr>
+              <th style="min-width: 140px; text-align: left;">Habit</th>
+              ${last7Days.map(date => `<th style="width: 70px; font-size: 12px;">${date.slice(5)}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+    `;
 
     habits.forEach(habit => {
-        html += `<tr><td><span style="display:inline-block;width:16px;height:16px;background:${habit.color};border-radius:50%;margin-right:8px;"></span>${habit.name}</td>`;
-        last7Days.forEach(date => {
-            const done = habit.completedDates.includes(date);
-            html += `<td style="text-align:center;color:${done ? 'green' : 'red'}">${done ? '✓' : '✗'}</td>`;
-        });
-        html += '</tr>';
+        html += `
+          <tr>
+            <td class="text-start">
+              <span style="display:inline-block;width:16px;height:16px;background:${habit.color};border-radius:50%;margin-right:8px;"></span>
+              ${habit.name}
+            </td>
+            ${last7Days.map(date => {
+                const done = habit.completedDates.includes(date);
+                return `<td class="${done ? 'text-success' : 'text-danger'}">${done ? '✓' : '✗'}</td>`;
+            }).join('')}
+          </tr>
+        `;
     });
 
-    html += '</tbody></table>';
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
     calendarDiv.innerHTML = html;
 }
 
@@ -153,7 +173,7 @@ function renderStats() {
         const streak = calculateStreak(habit);
         const progressColor = percent === 100 ? '#198754' : percent >= 50 ? '#ffc107' : '#dc3545';
         statsDiv.innerHTML += `
-            <div class="mb-3 p-2 border rounded">
+            <div class="mb-3 p-2 border rounded  bg-light">
                 <div>
                     <span style="display:inline-block;width:16px;height:16px;background:${habit.color};border-radius:50%;margin-right:8px;"></span>
                     <strong>${habit.name}</strong> <em>(${habit.category})</em>
