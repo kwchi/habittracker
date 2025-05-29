@@ -20,7 +20,7 @@ form.addEventListener('submit', function(event) {
     if (!habitName || !habitCategory) return;
 
     const habit = { 
-        id: Date.now().toString() + Math.random().toString(36).slice(2), // унікальний id
+        id: Date.now().toString() + Math.random().toString(36).slice(2),
         name: habitName, 
         category: habitCategory, 
         color: habitColor, 
@@ -28,9 +28,8 @@ form.addEventListener('submit', function(event) {
     };
     habits.push(habit);
 
-    renderHabits();
-
     localStorage.setItem("habits", JSON.stringify(habits));
+    renderHabits();
 
     habitInput.value = '';
     categoryInput.selectedIndex = 0;
@@ -39,18 +38,27 @@ form.addEventListener('submit', function(event) {
 
 function renderHabits() {
     habitList.innerHTML = '';
-    habits.forEach((habit, index) => {
+    habits.forEach(habit => {
         const completedToday = habit.completedDates && habit.completedDates.includes(today);
         const btnClass = completedToday ? 'btn-secondary' : 'btn-success';
         const btnText = completedToday ? 'Виконано сьогодні' : 'Виконано';
-        const btnDisabled = completedToday ? 'disabled' : '';
+        const btnDisabled = completedToday ? true : false;
+
         const li = document.createElement('li');
+        li.classList.add('mb-2');
         li.innerHTML = `
             <span style="display:inline-block;width:16px;height:16px;background:${habit.color};border-radius:50%;margin-right:8px;"></span>
             <strong>${habit.name}</strong> <em>(${habit.category})</em>
-            <button class="btn btn-sm ms-2 ${btnClass}" ${btnDisabled} onclick="markHabitDone('${habit.id}')">${btnText}</button>
-            <button class="btn btn-sm btn-danger ms-2" onclick="deleteHabit('${habit.id}')">Видалити</button>
+            <button class="btn btn-sm ms-2 ${btnClass}" ${btnDisabled ? 'disabled' : ''}>${btnText}</button>
+            <button class="btn btn-sm btn-warning ms-2">Редагувати</button>
+            <button class="btn btn-sm btn-danger ms-2">Видалити</button>
         `;
+
+        const buttons = li.querySelectorAll('button');
+        buttons[0].onclick = () => markHabitDone(habit.id);
+        buttons[1].onclick = () => openEditHabit(habit.id);
+        buttons[2].onclick = () => deleteHabit(habit.id);
+
         habitList.appendChild(li);
     });
 
@@ -71,33 +79,23 @@ window.markHabitDone = function(id) {
     if (!habit) return;
     if (!habit.completedDates.includes(today)) {
         habit.completedDates.push(today);
-        renderHabits();
         localStorage.setItem("habits", JSON.stringify(habits));
+        renderHabits();
     }
 }
 
 function getLast7Days() {
-  const days = [];
-  const today = new Date();
+    const days = [];
+    const todayDate = new Date();
 
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
-    days.push(date.toISOString().split('T')[0]);
-  }
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(todayDate);
+        date.setDate(todayDate.getDate() - i);
+        days.push(date.toISOString().split('T')[0]);
+    }
 
-  return days;
+    return days;
 }
-
-const last7Days = getLast7Days();
-
-last7Days.forEach(date => {
-  const done = habit.completedDates.includes(date);
-    const cell = document.createElement('span');
-    cell.textContent = done ? '✓' : '✗';
-    cell.style.margin = '0 2px';
-    cell.style.color = done ? 'green' : 'red';
-});
 
 function renderCalendar() {
     const calendarDiv = document.getElementById('calendar-content');
@@ -126,10 +124,10 @@ function renderCalendar() {
 
 function calculateStreak(habit) {
     let streak = 0;
-    const today = new Date();
+    const todayDate = new Date();
     for (let i = 0; i < 100; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
+        const date = new Date(todayDate);
+        date.setDate(todayDate.getDate() - i);
         const formatted = date.toISOString().split('T')[0];
         if (habit.completedDates.includes(formatted)) {
             streak++;
@@ -168,3 +166,34 @@ function renderStats() {
         `;
     });
 }
+
+window.openEditHabit = function(id) {
+    const habit = habits.find(h => h.id === id);
+    if (!habit) return;
+    document.getElementById('edit-habit-id').value = habit.id;
+    document.getElementById('edit-habit-name').value = habit.name;
+    document.getElementById('edit-habit-category').value = habit.category;
+    document.getElementById('edit-habit-color').value = habit.color;
+
+    const modal = new bootstrap.Modal(document.getElementById('editHabitModal'));
+    modal.show();
+};
+
+document.getElementById('edit-habit-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit-habit-id').value;
+    const name = document.getElementById('edit-habit-name').value.trim();
+    const category = document.getElementById('edit-habit-category').value;
+    const color = document.getElementById('edit-habit-color').value;
+
+    const habit = habits.find(h => h.id === id);
+    if (habit) {
+        habit.name = name;
+        habit.category = category;
+        habit.color = color;
+        localStorage.setItem("habits", JSON.stringify(habits));
+        renderHabits();
+    }
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editHabitModal'));
+    modal.hide();
+});
